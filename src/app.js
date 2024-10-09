@@ -20,6 +20,8 @@ import { Terminal } from '@xterm/xterm'
 import { WebLinksAddon } from '@xterm/addon-web-links'
 import { FitAddon } from '@xterm/addon-fit'
 
+import Chart from 'chart.js/auto'
+
 import { addUpdateHandler, createNewEditor, getEditorFromElement } from './editor.js'
 import { displayOpenFile, createTab } from './editor_tabs.js'
 import { serial as webSerialPolyfill } from 'web-serial-polyfill'
@@ -72,6 +74,7 @@ let editor, term, port
 let editorFn = ''
 let isInRunMode = false
 let devInfo = null
+let chart
 
 async function disconnectDevice() {
     if (port) {
@@ -206,6 +209,7 @@ export async function connectDevice(type) {
 
     port.onReceive((data) => {
         term.write(data)
+        addPlotterData(data)
     })
 
     port.onDisconnect(() => {
@@ -1173,6 +1177,10 @@ export function applyTranslation() {
 
     term.loadAddon(new WebLinksAddon())
 
+    // Plotter init
+
+    initPlotter()
+
     addEventListener('resize', (_event) => {
         fitAddon.fit()
     })
@@ -1338,4 +1346,79 @@ function stopDrag() {
     document.documentElement.removeEventListener('touchmove', doDrag, false)
     document.documentElement.removeEventListener('mouseup', stopDrag, false)
     document.documentElement.removeEventListener('touchend', stopDrag, false)
+}
+
+/*
+ * Plotter
+ */
+
+export function togglePlotter() {
+    // console.log('Plotter toggled')
+    const plotter = QID('plotter')
+
+    if (plotter.classList.contains('active')) {
+        plotter.classList.remove('active')
+    } else {
+        plotter.classList.add('active')
+    }
+}
+
+function initPlotter() {
+    const plotCanvas = document.createElement('canvas')
+    const plotter = QID('plotter')
+    plotter.append( plotCanvas )
+
+    chart = new Chart( plotCanvas, {
+        type: 'scatter',
+        data: {
+            datasets: [
+                {
+                    label: 'Plotter',
+                    data: [],
+                    backgroundColor: 'red',
+                    borderColor: 'red',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            animation: false,
+            maintainAspectRatio: false,
+            showLine: true,
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom'
+                }
+            },
+            elements: {
+                point: {
+                    radius: 0
+                },
+                line: {
+                    stepped: true
+                }
+            }
+        }
+    })
+}
+
+function addPlotterData(data) {
+    console.log(data, typeof data)
+
+    if ( !data.startsWith('(') ) return
+    let result = data.match(/\((.*?)\)/g)
+    
+    if ( result !== null ) {
+        let values = result.map(value => value.slice(1, -1).split(',').map(x => parseFloat(x)))
+        console.log( values )
+        
+        if (values.length > 0) {
+            chart.data.datasets[0].data.push(
+                { x: chart.data.datasets[0].data.length, y: values[0][0] }
+            )
+
+            chart.update()
+        }
+    }
 }

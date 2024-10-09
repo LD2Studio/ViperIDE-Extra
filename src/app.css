@@ -136,9 +136,21 @@ body.loaded {
     padding: 10px 10px;
 }
 
+#outputs {
+    height: 0%;
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 5px;
+}
+
 #xterm {
-    height: 0px;
+    flex: 1;
     background: var(--bg-color-edit);
+}
+
+#plotter {
+    flex: 0 0 400px;
 }
 
 .marked-viewer {

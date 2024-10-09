@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ViperIDE</title>
+    <title>ViperIDE (LD2Studio)</title>
     <link rel="icon" type="image/png" href="assets/favicon.png"/>
     <link rel="manifest" href="manifest.json">
 
@@ -179,10 +179,16 @@
                         <button title="Soft Reset" onclick="app.reboot('soft')"><i class="fa-solid fa-arrows-rotate"></i></button>
                         <button title="Hard Reset" onclick="app.reboot('hard')"><i class="fa-solid fa-power-off"></i></button>
                         <button title="Full Screen" onclick="app.toggleFullScreen('terminal-container')" id="term-expand"><i class="fa-solid fa-expand"></i></button>
+                        <button title="Plotter" onclick="app.togglePlotter()">Plotter</button>
                     </div>
                 </div>
-                <div id="xterm" class="tab-content active">
-                    <!-- Xterm.js terminal content goes here -->
+                <div id="outputs">
+                    <div id="xterm" class="tab-content active">
+                        <!-- Xterm.js terminal content goes here -->
+                    </div>
+                    <div id="plotter" class="tab-content">
+                        <!-- Plotter content goes here -->
+                    </div>
                 </div>
                 <div id="logs" class="tab-content">
                     <!-- Logs content goes here -->
