@@ -1402,7 +1402,21 @@ function initPlotter() {
             scales: {
                 x: {
                     type: 'linear',
-                    position: 'bottom'
+                    position: 'bottom',
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.2)'
+                    },
+                    border: {
+                        color: 'rgba(255, 255, 255, 0.7)'
+                    }
+                },
+                y: {
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.2)'
+                    },
+                    border: {
+                        color: 'rgba(255, 255, 255, 0.7)'
+                    }
                 }
             },
             elements: {

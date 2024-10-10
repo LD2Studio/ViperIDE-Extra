@@ -150,7 +150,7 @@ body.loaded {
 }
 
 #plotter {
-    flex: 0 0 400px;
+    flex: 1;
     background: var(--bg-color-edit);
 }
 
