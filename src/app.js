@@ -74,7 +74,7 @@ let editor, term, port
 let editorFn = ''
 let isInRunMode = false
 let devInfo = null
-let chart
+let chart, chartData = ''
 
 async function disconnectDevice() {
     if (port) {
@@ -209,7 +209,13 @@ export async function connectDevice(type) {
 
     port.onReceive((data) => {
         term.write(data)
-        addPlotterData(data)
+
+        chartData += data
+        if (chartData.endsWith('\r\n')) {
+            
+            addPlotterData(chartData)
+            chartData = ''
+        }
     })
 
     port.onDisconnect(() => {
@@ -643,7 +649,7 @@ export async function runCurrentFile() {
         toastr.error(`${editorFn} file is not executable`)
         return
     }
-
+    clearPlotter()
     term.write('\r\n')
 
     const soft_reboot = false
@@ -672,6 +678,7 @@ export async function runCurrentFile() {
         QID('btn-run-icon').classList.replace('fa-circle-stop', 'fa-circle-play')
         isInRunMode = false
         term.write('\r\n>>> ')
+        
     }
     // Success
     analytics.track('Script Run')
@@ -1373,10 +1380,17 @@ function initPlotter() {
         data: {
             datasets: [
                 {
-                    label: 'Plotter',
+                    label: 'Ch1',
                     data: [],
                     backgroundColor: 'red',
                     borderColor: 'red',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Ch2',
+                    data: [],
+                    backgroundColor: 'blue',
+                    borderColor: 'blue',
                     borderWidth: 1
                 }
             ]
@@ -1404,21 +1418,27 @@ function initPlotter() {
 }
 
 function addPlotterData(data) {
-    console.log(data, typeof data)
+    console.log(data)
+    if ( data.startsWith('[') && data.endsWith(']\r\n') && data.length > 4 ) {
+        const arr = JSON.parse(data)
 
-    if ( !data.startsWith('(') ) return
-    let result = data.match(/\((.*?)\)/g)
-    
-    if ( result !== null ) {
-        let values = result.map(value => value.slice(1, -1).split(',').map(x => parseFloat(x)))
-        console.log( values )
-        
-        if (values.length > 0) {
-            chart.data.datasets[0].data.push(
-                { x: chart.data.datasets[0].data.length, y: values[0][0] }
+        for (let i = 0; i < arr.length; i++) {
+            chart.data.datasets[i].data.push(
+                { x: chart.data.datasets[i].data.length, y: arr[i] }
             )
-
-            chart.update()
         }
+        
+        chart.update()
+        
     }
+}
+
+function clearPlotter() {
+
+    chart.data.datasets.forEach((dataset) => {
+        dataset.data = []
+    })
+    
+    chart.update()
+
 }

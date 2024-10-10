@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "rollup --config",
-    "start": "rollup --config --configDebug --watch",
-    "deplay": "gh-pages -d build"
+    "start": "rollup --config --configDebug --watch"
   },
   "dependencies": {
     "@astral-sh/ruff-wasm-web": "0.6.9",
@@ -28,7 +27,6 @@
     "@xterm/xterm": "^5.5.0",
     "chart.js": "^4.4.4",
     "codemirror": "^6.0.1",
-    "gh-pages": "^6.1.1",
     "github-fork-ribbon-css": "^0.2.3",
     "i18next": "^23.15.2",
     "i18next-browser-languagedetector": "^8.0.0",

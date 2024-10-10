@@ -151,6 +151,7 @@ body.loaded {
 
 #plotter {
     flex: 0 0 400px;
+    background: var(--bg-color-edit);
 }
 
 .marked-viewer {
