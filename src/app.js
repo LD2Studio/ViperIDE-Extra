@@ -1418,9 +1418,13 @@ function initPlotter() {
 }
 
 function addPlotterData(data) {
-    console.log(data)
-    if ( data.startsWith('[') && data.endsWith(']\r\n') && data.length > 4 ) {
-        const arr = JSON.parse(data)
+    // console.log(data)
+    const dataArr = data.match(/\[.*?\]/g) // extract array from string
+    // console.log(dataArr[0])
+
+    if ( dataArr !== null ) {
+    
+        const arr = JSON.parse(dataArr[0])
 
         for (let i = 0; i < arr.length; i++) {
             chart.data.datasets[i].data.push(
@@ -1429,8 +1433,9 @@ function addPlotterData(data) {
         }
         
         chart.update()
-        
+
     }
+
 }
 
 function clearPlotter() {
